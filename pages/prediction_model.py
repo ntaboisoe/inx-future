@@ -23,6 +23,12 @@ def encode_new_data(df_new, encoding_dictionary_target, target_encoded_columns):
     for col in target_encoded_columns:
         if col in df_encoded.columns:
             mapping = encoding_dictionary_target[col] # Direct access - encoding_dictionary_target[col] IS the Series
+            # --- Debugging: Print the INDEX of the mapping Series ---
+            st.write(f"Debugging - Column: {col}")
+            st.write(f"Debugging - Index of mapping for {col}:")
+            st.write(mapping.index) # Print the index itself
+            st.write(f"Debugging - Data type of index for {col}: {mapping.index.dtype}") # Print the data type of the index
+            # --- End Debugging ---            
             encoded_values = df_encoded[col].map(mapping)
             df_encoded[col] = encoded_values.fillna(mapping.mean()) # Keep fillna for unknown categories
         else:
