@@ -26,6 +26,9 @@ from sklearn.metrics import confusion_matrix  # Confusion matrix
 from sklearn.model_selection import train_test_split  # Splitting data into train and test sets
 from sklearn.model_selection import RandomizedSearchCV  # Hyperparameter tuning using randomized search
 
+#Library for the app
+import streamlit as st
+
 #-------------------------------------------------------------------------------------------------------------------------
 # Step (01) - Define the Page Headers
 #-------------------------------------------------------------------------------------------------------------------------
