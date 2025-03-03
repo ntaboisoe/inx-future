@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from home.home import model_package # Import from home.py
+from ..home import model_package, best_model, encoding_dictionary, target_encoded_columns, best_features, encode_new_data, get_likert_description # Corrected import
 
 # --- Unpack model package (if needed here, example visualizations may not directly need the model itself) ---
 # best_model = model_package['model'] # Not used in this example, but keep if you plan to add model related stuff here
