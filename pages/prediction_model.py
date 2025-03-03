@@ -22,6 +22,8 @@ def encode_new_data(df_new, encoding_dictionary_target, target_encoded_columns):
     df_encoded = df_new.copy()
     for col in target_encoded_columns:
         if col in df_encoded.columns: # Check if the column exists in the dataframe
+            st.write(f"Debugging - Column: {col}")  # Add this debugging print
+            st.write(f"Debugging - encoding_dictionary_target[col]: {encoding_dictionary_target[col]}") # Add this debugging print
             mapping = encoding_dictionary_target[col]['mapping']
             encoded_values = df_encoded[col].map(mapping)
             # Handle cases where categories in new data are not in the mapping (optional: fill with a default value, or handle as NaN)
