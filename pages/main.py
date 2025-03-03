@@ -42,26 +42,47 @@ st.markdown("## Project Main Overview")
 
 st.markdown("Before we begin let us load the INX Master Data Set that was used to train the model.")
 
-@st.cache_data #To prevent multiple loading of the dataframe
+
+@st.cache_data  # To prevent multiple loading of the dataframe
 def load_data():
     successful_import = 0
-    #Import the Employee Data
+    # Import the Employee Data
     url = 'https://data.iabac.org/exam/p2/data/INX_Future_Inc_Employee_Performance_CDS_Project2_Data_V1.8.xls'
     response = requests.get(url)
     
     if response.status_code == 200:
         file = BytesIO(response.content)
-        df = pd.read_excel(io = file, sheet_name = 'INX_Future_Inc_Employee_Perform')
-        st.write('Data imported successfully')
+        df = pd.read_excel(io=file)
+        st.write('Data imported successfully')  # Success message
         successful_import = 1
-        return df,successful_import
+        return df, successful_import
     else:
-        st.write(f'Error: {response.status_code}')
+        st.write(f'Error: {response.status_code}')  # Error message
         successful_import = 0
-        return None,successful_import
-    
+        return None, successful_import
 
-df,successful_import = load_data()
+# Call the load_data function to import the data
+df, successful_import = load_data()
+
+# Step (02) - Conditional Display of Selection Box after Successful Data Import
+if successful_import == 0:
+    st.write('Data import was not successful. Please reload the app and try again.')
+    
+elif successful_import == 1:
+    st.write('Explore the different facets of our Employee Performance Prediction project using the sub-pages in the dropdown below.')
+    
+    # Display the selection box to allow user to select subpages, only if import is successful
+    main_page_activity = st.selectbox("Select Page to Explore", ["Source Data Analysis", "Source Data Visualizations"])
+
+    # Additional logic to render content based on the selected page (you can expand this part as needed)
+    if main_page_activity == "Source Data Analysis":
+        st.write(df.head())  # Show top rows of the DataFrame for analysis
+    elif main_page_activity == "Source Data Visualizations":
+        st.write("Here will be your visualizations.")  # Placeholder for visualizations
+
+
+
+
 
 #-------------------------------------------------------------------------------------------------------------------------
 # Step (02) - Allow User to now Select Subpages
