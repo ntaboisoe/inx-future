@@ -11,3 +11,4 @@ scipy
 numpy
 pickle-mixin  #
 openpyxl
+xlrd
