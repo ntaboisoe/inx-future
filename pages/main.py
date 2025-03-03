@@ -1,8 +1,24 @@
 import streamlit as st
+from ..home import model_package # Just import model_package for now
+
+st.title("Testing Import")
+print("Import Attempted") # Add this print statement
+
+if 'model_package' in locals(): # Check if import was successful
+    st.success("Successfully imported model_package from home.py!")
+else:
+    st.error("Failed to import model_package. Check terminal for errors.")
+
+
+
+
+import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from ..home import model_package, best_model, encoding_dictionary, target_encoded_columns, best_features, encode_new_data, get_likert_description # Corrected import
+
+
 
 # --- Unpack model package (if needed here, example visualizations may not directly need the model itself) ---
 # best_model = model_package['model'] # Not used in this example, but keep if you plan to add model related stuff here
