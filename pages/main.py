@@ -82,8 +82,7 @@ if main_page_activity == "Source Data Analysis":
 # Step (02) - Import Libraries Section of 1st Page as Narkdown
 #-------------------------------------------------------------------------------------------------------------------------    
 
-    libraries_import_markdown = 
-    """
+    libraries_import_markdown ="""
         # General Libraries
         import pandas as pd  # Data manipulation and analysis
         import matplotlib.pyplot as plt  # Data visualization
@@ -122,8 +121,7 @@ import matplotlib.pyplot as plt
 #-------------------------------------------------------------------------------------------------------------------------    
 
     st.subheader("Data Import")
-    data_import_markdown = 
-    """
+    data_import_markdown = """
         def load_data():
             successful_import = 0
             #Import the Employee Data
