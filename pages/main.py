@@ -1,70 +1,162 @@
-import streamlit as st
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import gzip
-import pickle
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (00) - Import the Libraries to be Used in the Streamlit App
+#-------------------------------------------------------------------------------------------------------------------------
 
-# --- Model Loading and Helper Functions (DUPLICATED in each page file) ---
-def load_model_package():
-    with gzip.open('model_package.pkl.gz', 'rb') as file:
-        loaded_model_package = pickle.load(file)
-    return loaded_model_package
+# General Libraries
+import pandas as pd  # Data manipulation and analysis
+import matplotlib.pyplot as plt  # Data visualization
+import seaborn as sns  # Statistical data visualization
 
-model_package = load_model_package()
-best_model = model_package['model']
-encoding_dictionary = model_package['encoding_dictionary']
-target_encoded_columns = model_package['target_encoded_columns']
-best_features = model_package['best_features']
+# Libraries for Reading Data from Website
+import requests  # Sending HTTP requests
+from io import BytesIO  # Handling byte streams
 
+# Libraries for Encoding Categorical Variables
+from category_encoders import TargetEncoder  # Target mean encoding of categorical features
 
-# --- Helper function for target encoding new data ---
-def encode_new_data(df_new, encoding_dictionary_target, target_encoded_columns):
-    df_encoded = df_new.copy()
-    for col in target_encoded_columns:
-        if col in df_encoded.columns: # Check if the column exists in the dataframe
-            mapping = encoding_dictionary_target[col]['mapping']
-            encoded_values = df_encoded[col].map(mapping)
-            # Handle cases where categories in new data are not in the mapping (optional: fill with a default value, or handle as NaN)
-            df_encoded[col] = encoded_values.fillna(mapping.mean()) # Using mean for unknown categories as example. Adjust as needed.
-        else:
-            st.error(f"Required column '{col}' for encoding is missing in uploaded data.")
-            return None # Indicate error
-    return df_encoded
+# Libraries for Machine Learning Models
+from sklearn.ensemble import RandomForestClassifier  # Random forest classifier
 
-# --- Helper function to get description from Likert scale value ---
-def get_likert_description(value, column_name, encoding_dictionary_likert):
-    if column_name in encoding_dictionary_likert and value in encoding_dictionary_likert[column_name]:
-        return f"{value} - {encoding_dictionary_likert[column_name][value]}"
-    return str(value) # Return value as string if no description found
-# --- End of Duplicated Code ---
+# Libraries for Model Evaluation
+from sklearn.metrics import accuracy_score  # Accuracy metri
+from sklearn.metrics import classification_report  # Classification report
+from sklearn.metrics import confusion_matrix  # Confusion matrix
 
+# Libraries for Model Selection and Hyperparameter Tuning
+from sklearn.model_selection import train_test_split  # Splitting data into train and test sets
+from sklearn.model_selection import RandomizedSearchCV  # Hyperparameter tuning using randomized search
 
-st.title("Main Page")
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (01) - Define the Page Headers
+#-------------------------------------------------------------------------------------------------------------------------
+
+st.title("INX Future Inc. Master Data Exploration")
 st.markdown("## Project Main Overview")
-st.markdown("Explore the different facets of our Employee Performance Prediction project using the sub-pages in the sidebar under 'Main Page Activities'.")
 
-main_page_activity = st.selectbox("Main Page Activities", ["Overview", "Source Data Analysis", "Visualizations"])
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (02) - Import INX Data
+#-------------------------------------------------------------------------------------------------------------------------
+
+st.markdown("Before we begin let us load the INX Master Data Set that was used to train the model.")
+
+@st.cache_data #To prevent multiple loading of the dataframe
+def load_data():
+    successful_import = 0
+    #Import the Employee Data
+    url = 'https://data.iabac.org/exam/p2/data/INX_Future_Inc_Employee_Performance_CDS_Project2_Data_V1.8.xls'
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        file = BytesIO(response.content)
+        df = pd.read_excel(io = file, sheet_name = 'INX_Future_Inc_Employee_Perform')
+        st.write('Data imported successfully')
+        successful_import = 1
+        return df,successful_import
+    else:
+        st.write(f'Error: {response.status_code}')
+        successful_import = 0
+        return None,successful_import
+    
+
+df,successful_import = load_data()
+
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (02) - Allow User to now Select Subpages
+#-------------------------------------------------------------------------------------------------------------------------
+if successful_import = 0:
+    st.write('Data import was not successful. Please reload the app and try again')
+    
+elif successful_import = 1:
+    st.write('Explore the different facets of our Employee Performance Prediction project using the sub-pages in the dropdown below')
+    
+    main_page_activity = st.selectbox("Select Page to Explore", ["Source Data Analysis", "Source Data Visualizations"])
+
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (02) - Load Source Data Analysis Subpage Based on User Selection
+#-------------------------------------------------------------------------------------------------------------------------
+
 if main_page_activity == "Source Data Analysis":
     st.header("Source Data Analysis")
 
-    # --- Source Data Analysis Sub-page Content ---
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (02) - Import Libraries Section of 1st Page as Narkdown
+#-------------------------------------------------------------------------------------------------------------------------    
+
+    libraries_import_markdown = 
+    """
+        # General Libraries
+        import pandas as pd  # Data manipulation and analysis
+        import matplotlib.pyplot as plt  # Data visualization
+        import seaborn as sns  # Statistical data visualization
+        
+        # Libraries for Reading Data from Website
+        import requests  # Sending HTTP requests
+        from io import BytesIO  # Handling byte streams
+        
+        # Libraries for Encoding Categorical Variables
+        from category_encoders import TargetEncoder  # Target mean encoding of categorical features
+        
+        # Libraries for Machine Learning Models
+        from sklearn.ensemble import RandomForestClassifier  # Random forest classifier
+        
+        # Libraries for Model Evaluation
+        from sklearn.metrics import accuracy_score  # Accuracy metri
+        from sklearn.metrics import classification_report  # Classification report
+        from sklearn.metrics import confusion_matrix  # Confusion matrix
+        
+        # Libraries for Model Selection and Hyperparameter Tuning
+        from sklearn.model_selection import train_test_split  # Splitting data into train and test sets
+        from sklearn.model_selection import RandomizedSearchCV  # Hyperparameter tuning using randomized search
+    """
 
     st.subheader("Import Libraries")
+    st.code(libraries_import_markdown)
     st.code("""
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 """, language='python')
 
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (02) - Import Data Section of 1st Page as Markdown
+#-------------------------------------------------------------------------------------------------------------------------    
+
     st.subheader("Data Import")
+    data_import_markdown = 
+    """
+        def load_data():
+            successful_import = 0
+            #Import the Employee Data
+            url = 'https://data.iabac.org/exam/p2/data/INX_Future_Inc_Employee_Performance_CDS_Project2_Data_V1.8.xls'
+            response = requests.get(url)
+            
+            if response.status_code == 200:
+                file = BytesIO(response.content)
+                df = pd.read_excel(io = file, sheet_name = 'INX_Future_Inc_Employee_Perform')
+                st.write('Data imported successfully')
+                successful_import = 1
+                return df,successful_import
+            else:
+                st.write(f'Error: {response.status_code}')
+                successful_import = 0
+                return None,successful_import
+            
+        
+        df,successful_import = load_data()    
+    """
+    st.code(data_import_markdown)
     st.code("""
 iris_df = sns.load_dataset('iris')
 st.dataframe(iris_df.head())
 """, language='python')
+
+    st.dataframe(df.head().T)
+    
     iris_df = sns.load_dataset('iris')
     st.dataframe(iris_df.head())
-
+#-------------------------------------------------------------------------------------------------------------------------
+# Step (02) - EDA for Imported Data
+#-------------------------------------------------------------------------------------------------------------------------    
     st.subheader("Exploratory Data Analysis")
     st.markdown("Descriptive Statistics:")
     st.dataframe(iris_df.describe())
@@ -135,8 +227,8 @@ st.write(conf_matrix)
     st.markdown("This section provided a basic overview of a data science workflow using the Iris dataset. You can expand on each step to perform more in-depth analysis and modeling.")
 
 
-elif main_page_activity == "Visualizations":
-    st.header("Visualizations")
+elif main_page_activity == "Source Data Visualizations":
+    st.header("Source Data Visualizations")
 
     # --- Visualizations Sub-page Content ---
 
@@ -159,3 +251,5 @@ elif main_page_activity == "Visualizations":
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
     st.pyplot(fig_heatmap)
     plt.clf()
+
+
