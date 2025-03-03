@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io  # For handling in-memory file download
-from home.home import best_model, encoding_dictionary, target_encoded_columns, best_features, encode_new_data, get_likert_description # Import from home.py
+from ..home import model_package, best_model, encoding_dictionary, target_encoded_columns, best_features, encode_new_data, get_likert_description # Corrected import
 
 st.title("Prediction Model")
 st.markdown("## Employee Performance Prediction")
