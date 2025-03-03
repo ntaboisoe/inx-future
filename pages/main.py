@@ -63,10 +63,10 @@ df,successful_import = load_data()
 #-------------------------------------------------------------------------------------------------------------------------
 # Step (02) - Allow User to now Select Subpages
 #-------------------------------------------------------------------------------------------------------------------------
-if successful_import = 0:
+if successful_import == 0:
     st.write('Data import was not successful. Please reload the app and try again')
     
-elif successful_import = 1:
+elif successful_import == 1:
     st.write('Explore the different facets of our Employee Performance Prediction project using the sub-pages in the dropdown below')
     
     main_page_activity = st.selectbox("Select Page to Explore", ["Source Data Analysis", "Source Data Visualizations"])
