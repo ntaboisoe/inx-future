@@ -2,7 +2,7 @@ import streamlit as st
 import gzip
 import pickle
 
-# --- Load the model package ---
+# --- Model Loading and Helper Functions (DUPLICATED in each page file) ---
 def load_model_package():
     with gzip.open('model_package.pkl.gz', 'rb') as file:
         loaded_model_package = pickle.load(file)
@@ -34,6 +34,7 @@ def get_likert_description(value, column_name, encoding_dictionary_likert):
     if column_name in encoding_dictionary_likert and value in encoding_dictionary_likert[column_name]:
         return f"{value} - {encoding_dictionary_likert[column_name][value]}"
     return str(value) # Return value as string if no description found
+# --- End of Duplicated Code ---
 
 
 st.set_page_config(page_title="Employee Performance Prediction App", layout="wide")
