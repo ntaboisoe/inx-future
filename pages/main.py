@@ -122,11 +122,6 @@ elif successful_import == 1:
     
         st.subheader("Import Libraries")
         st.code(libraries_import_markdown)
-        st.code("""
-    import pandas as pd
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    """, language='python')
     
     #-------------------------------------------------------------------------------------------------------------------------
     # Step (02) - Import Data Section of 1st Page as Markdown
@@ -136,105 +131,130 @@ elif successful_import == 1:
         data_import_markdown = """
             def load_data():
                 successful_import = 0
-                #Import the Employee Data
+                # Import the Employee Data
                 url = 'https://data.iabac.org/exam/p2/data/INX_Future_Inc_Employee_Performance_CDS_Project2_Data_V1.8.xls'
                 response = requests.get(url)
                 
                 if response.status_code == 200:
                     file = BytesIO(response.content)
-                    df = pd.read_excel(io = file, sheet_name = 'INX_Future_Inc_Employee_Perform')
-                    st.write('Data imported successfully')
+                    df = pd.read_excel(io=file)
+                    st.write('Data imported successfully')  # Success message
                     successful_import = 1
-                    return df,successful_import
+                    return df, successful_import
                 else:
-                    st.write(f'Error: {response.status_code}')
+                    st.write(f'Error: {response.status_code}')  # Error message
                     successful_import = 0
-                    return None,successful_import
-                
+                    return None, successful_import
             
-            df,successful_import = load_data()    
+            # Call the load_data function to import the data
+            df, successful_import = load_data()        
         """
         st.code(data_import_markdown)
-        st.code("""
-    iris_df = sns.load_dataset('iris')
-    st.dataframe(iris_df.head())
-    """, language='python')
-    
         st.dataframe(df.head().T)
         
-        iris_df = sns.load_dataset('iris')
-        st.dataframe(iris_df.head())
     #-------------------------------------------------------------------------------------------------------------------------
     # Step (02) - EDA for Imported Data
     #-------------------------------------------------------------------------------------------------------------------------    
         st.subheader("Exploratory Data Analysis")
         st.markdown("Descriptive Statistics:")
-        st.dataframe(iris_df.describe())
-    
-        st.markdown("Pair Plot:")
-        fig = sns.pairplot(iris_df, hue='species')
-        st.pyplot(fig)
-        plt.clf() # Clear pyplot for next plot
+        st.dataframe(df.describe())
+
+    #-------------------------------------------------------------------------------------------------------------------------
+    # Step (02) - Data Preprocessing - Select Columns
+    #-------------------------------------------------------------------------------------------------------------------------            
     
         st.subheader("Data Preprocessing")
-        st.markdown("Encoding Categorical Variables (Example using Label Encoding for 'species'):")
-        st.code("""
-    from sklearn.preprocessing import LabelEncoder
-    
-    label_encoder = LabelEncoder()
-    iris_df['species_encoded'] = label_encoder.fit_transform(iris_df['species'])
-    st.dataframe(iris_df[['species', 'species_encoded']].head())
-    """, language='python')
-        from sklearn.preprocessing import LabelEncoder
-        label_encoder = LabelEncoder()
-        iris_df['species_encoded'] = label_encoder.fit_transform(iris_df['species'])
-        st.dataframe(iris_df[['species', 'species_encoded']].head())
-    
-    
-        st.subheader("Model Building (Example with Logistic Regression)")
+        st.write("Extract Feature and Target Columns")
+
+        target_encoded_columns = ['EmpJobRole', 'EmpDepartment']
+        already_encoded_columns = ['EmpWorkLifeBalance', 'EmpEnvironmentSatisfaction']
+        likert_scale_features = ['EmpEnvironmentSatisfaction', 'EmpWorkLifeBalance']
+        best_features = [
+            'EmpEnvironmentSatisfaction',
+            'EmpLastSalaryHikePercent',
+            'EmpJobRole',
+            'YearsSinceLastPromotion',
+            'ExperienceYearsInCurrentRole',
+            'EmpDepartment',
+            'EmpWorkLifeBalance'
+        ]
+        preprocessing_code_markdown="""
+                target_encoded_columns = ['EmpJobRole', 'EmpDepartment']
+                already_encoded_columns = ['EmpWorkLifeBalance', 'EmpEnvironmentSatisfaction']
+                likert_scale_features = ['EmpEnvironmentSatisfaction', 'EmpWorkLifeBalance']
+                best_features = [
+                    'EmpEnvironmentSatisfaction',
+                    'EmpLastSalaryHikePercent',
+                    'EmpJobRole',
+                    'YearsSinceLastPromotion',
+                    'ExperienceYearsInCurrentRole',
+                    'EmpDepartment',
+                    'EmpWorkLifeBalance'
+                ]       
+                """
+        st.code(preprocessing_code_markdown)
+        
+    #-------------------------------------------------------------------------------------------------------------------------
+    # Step (02) - Data Preprocessing - Create DF with these columns
+    #-------------------------------------------------------------------------------------------------------------------------                 
+        X = df[best_features]
+        y = df[target_column]
+
+        create_variables_markdown="""
+            X = df[best_features]
+            y = df[target_column]
+            """
+        st.write("Create Target and Features Variables")
+        st.code(create_variables_markdown)
+    #-------------------------------------------------------------------------------------------------------------------------
+    # Step (02) - Encode the Target Variables
+    #-------------------------------------------------------------------------------------------------------------------------     
+        encoder = TargetEncoder(cols=target_encoded_columns)
+        X_encoded = encoder.fit_transform(X, y) # Fit and transform in one step
+
+        encode_data_markdown="""
+            encoder = TargetEncoder(cols=target_encoded_columns)
+            X_encoded = encoder.fit_transform(X, y) # Fit and transform in one step
+        """
+        st.write("Encode the Data")
+        st.code(encode_data_markdown)
+    #-------------------------------------------------------------------------------------------------------------------------
+    # Step (02) - Train the Model
+    #-------------------------------------------------------------------------------------------------------------------------   
+        st.subheader("Model Building Random Forest")
         st.markdown("Model Training:")
-        st.code("""
-    from sklearn.model_selection import train_test_split
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import accuracy_score, confusion_matrix
-    
-    X = iris_df[['sepal_length', 'sepal_width', 'petal_length', 'petal_width']]
-    y = iris_df['species_encoded']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    
-    model = LogisticRegression(max_iter=1000)
-    model.fit(X_train, y_train)
-    """, language='python')
-        from sklearn.model_selection import train_test_split
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.metrics import accuracy_score, confusion_matrix
-        X = iris_df[['sepal_length', 'sepal_width', 'petal_length', 'petal_width']]
-        y = iris_df['species_encoded']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-        model = LogisticRegression(max_iter=1000)
-        model.fit(X_train, y_train)
-    
-    
+
+        # Split data into training and testing sets (optional but good practice for evaluation)
+        X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
+        
+        best_model = RandomForestClassifier(random_state=42) # Initialize the model
+        best_model.fit(X_train, y_train) # Train the model
+        
+        training_markdown="""
+            # Split data into training and testing sets (optional but good practice for evaluation)
+            X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
+            
+            best_model = RandomForestClassifier(random_state=42) # Initialize the model
+            best_model.fit(X_train, y_train) # Train the model
+            """
+        st.code(training_markdown)
+    #-------------------------------------------------------------------------------------------------------------------------
+    # Step (02) - Display Accuracy Score and Confusion Matrix
+    #-------------------------------------------------------------------------------------------------------------------------
         st.markdown("Model Evaluation:")
-        st.code("""
-    y_pred = model.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    conf_matrix = confusion_matrix(y_test, y_pred)
-    
-    st.write(f"Accuracy: {accuracy:.2f}")
-    st.write("Confusion Matrix:")
-    st.write(conf_matrix)
-    """, language='python')
-        y_pred = model.predict(X_test)
+        y_pred = best_model.predict(X_test) # Make predictions on the test set
         accuracy = accuracy_score(y_test, y_pred)
         conf_matrix = confusion_matrix(y_test, y_pred)
-        st.write(f"Accuracy: {accuracy:.2f}")
-        st.write("Confusion Matrix:")
+        
+        st.write(f"Accuracy of the Best Model: {accuracy:.4f}")
+        st.write("\nConfusion Matrix:")
         st.write(conf_matrix)
-    
+    #-------------------------------------------------------------------------------------------------------------------------
+    # Step (02) - Conclusion
+    #-------------------------------------------------------------------------------------------------------------------------
     
         st.subheader("Conclusion")
-        st.markdown("This section provided a basic overview of a data science workflow using the Iris dataset. You can expand on each step to perform more in-depth analysis and modeling.")
+        st.markdown("This section provided a basic overview of a data science workflow using the INX Employee Data.")
     
         
     elif main_page_activity == "Source Data Visualizations":
