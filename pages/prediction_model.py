@@ -22,19 +22,13 @@ def encode_new_data(df_new, encoding_dictionary_target, target_encoded_columns):
     df_encoded = df_new.copy()
     for col in target_encoded_columns:
         if col in df_encoded.columns:
-            mapping = encoding_dictionary_target[col] # Direct access - encoding_dictionary_target[col] IS the Series
-            # --- Debugging: Print the INDEX of the mapping Series ---
-            st.write(f"Debugging - Column: {col}")
-            st.write(f"Debugging - Index of mapping for {col}:")
-            st.write(mapping.index) # Print the index itself
-            st.write(f"Debugging - Data type of index for {col}: {mapping.index.dtype}") # Print the data type of the index
-            # --- End Debugging ---            
-            encoded_values = df_encoded[col].map(mapping)
-            df_encoded[col] = encoded_values.fillna(mapping.mean()) # Keep fillna for unknown categories
+            mapping = encoding_dictionary_target[col] # Now, mapping is a dictionary (category -> encoded value)
+            encoded_values = df_encoded[col].map(mapping) # .map() will work directly with the dictionary
+            df_encoded[col] = encoded_values.fillna(pd.Series(mapping).mean()) # Fill NaN with mean of dictionary values
         else:
             st.error(f"Required column '{col}' for encoding is missing in uploaded data.")
             return None
-    return df_encoded    
+    return df_encoded 
 
 # --- Helper function to get description from Likert scale value ---
 def get_likert_description(value, column_name, encoding_dictionary_likert):
