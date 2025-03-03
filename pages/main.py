@@ -178,6 +178,8 @@ elif successful_import == 1:
             'EmpDepartment',
             'EmpWorkLifeBalance'
         ]
+        target_column = 'PerformanceRating'
+        
         preprocessing_code_markdown="""
                 target_encoded_columns = ['EmpJobRole', 'EmpDepartment']
                 already_encoded_columns = ['EmpWorkLifeBalance', 'EmpEnvironmentSatisfaction']
@@ -190,7 +192,8 @@ elif successful_import == 1:
                     'ExperienceYearsInCurrentRole',
                     'EmpDepartment',
                     'EmpWorkLifeBalance'
-                ]       
+                ]
+        target_column = 'PerformanceRating'
                 """
         st.code(preprocessing_code_markdown)
         
