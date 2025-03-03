@@ -1,0 +1,12 @@
+streamlit
+pandas
+matplotlib
+seaborn
+requests
+scikit-learn
+category_encoders
+xgboost
+imbalanced-learn
+scipy
+numpy
+pickle-mixin  # To ensure compatibility with pickle
