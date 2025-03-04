@@ -79,7 +79,7 @@ if successful_import == 0:
     
 elif successful_import == 1:
     st.write('Explore the different facets of our Employee Performance Prediction project using the sub-pages in the dropdown below.')
-    st.markdown("/n---/n")
+    st.markdown("---")
     # Display the selection box to allow user to select subpages, only if import is successful
     main_page_activity = st.selectbox("**Select Page to Explore**", ["Select Page", "Source Data Analysis", "Source Data Visualizations"])
     
