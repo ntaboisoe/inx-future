@@ -11,7 +11,7 @@ st.markdown("This app is designed to predict employee performance ratings based 
 st.markdown("""* [**Main Page:**](https://inx-future-app-ntaboisoe.streamlit.app/main) Provides an overview of the project, source data analysis, and visualizations.""")
 st.markdown("""* [**Prediction Model Page:**](https://inx-future-app-ntaboisoe.streamlit.app/prediction_model) Allows users to upload their own data to predict employee performance ratings.""")
 
-st.markdown("**Please Select the Page to Browsse from the Sidebar**")
+st.markdown("**Please Select the Page to Browse from the Sidebar or Click the Respective Links to Open on a New Tab.**")
 
 st.markdown("---")
 st.markdown("This project leverages data science techniques for HR analytics, aiming to provide insights into employee performance factors and facilitate data-driven decision-making.")
